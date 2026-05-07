@@ -19,19 +19,6 @@
     <div class="main">
       <div class="settings-container">
         <div class="settings-card">
-          <h3>About:Blank</h3>
-          <p>Cloak the site in an about:blank page and toggle about:blank on startup (enabled by default)</p>
-          <div id="ab-settings">
-            <div id="ab-settings-container">
-              <label class="switch">
-                <input type="checkbox" id="ab-settings-switch" class="slider-checkbox" onchange="toggleAB()" />
-                <span class="slider-round"></span>
-              </label>
-            </div>
-            <button onclick="AB()" class="key-button">Open Popup</button>
-          </div>
-        </div>
-        <div class="settings-card">
           <h3>Set Panic Key</h3>
           <p>
             Quick open another site with one press. Used for redirects when about:blank is opened. For multiple key strokes separate them with a comma. Ex.
@@ -105,56 +92,6 @@
           <button class="key-button" value="Save" onclick="CustomIcon(); CustomName(); redirectToMainDomain();">Save</button>
           <button class="key-button" value="Reset" onclick="ResetCustomCloak(); redirectToMainDomain();">Reset Cloak</button>
         </div>
-        <div class="settings-card">
-          <h3>Choose your <b>Pr</b>oxy</h3>
-          <p>
-            Ultra<an>vio</an>let is the main <an>pro</an>xy, but Dynamic is faster and supports more sites! (Dynamic is still in beta, so it has some bugs.)
-          </p>
-          <select id="pChange">
-            <option value="uv">Ultraviolet (Default)</option>
-            <option value="dy">Dynamic (Doesn't work in about:blank)</option>
-          </select>
-        </div>
-        <div class="settings-card">
-          <h3>Set Background Image</h3>
-          <p>Change the site's background image.</p>
-          <input type="text" id="background-input" placeholder="Enter image URL" />
-          <button class="key-button" id="save-button">Save</button>
-          <button class="key-button" id="reset-button">Reset</button>
-        </div>
-        <div class="settings-card">
-          <h3>Particles</h3>
-          <p>Add the particles that are from the previous version to the new site.</p>
-          <label class="switch">
-            <input type="checkbox" class="slider-checkbox" id="2" />
-            <span class="slider-round"></span>
-          </label>
-        </div>
-        <div class="settings-card">
-          <h3>Themes!</h3>
-          <p>Pick from a variety of themes!</p>
-          <select placeholder="Solid Color Themes" id="dropdown" class="td" onchange="themeChange(this)">
-            <option disabled selected>Solid Color Themes</option>
-            <option value="d">Default</option>
-            <option value="Inverted">Inverted</option>
-            <option disabled selected>Catppuccin Themes</option>
-            <option value="catppuccinMocha">Mocha</option>
-            <option value="catppuccinMacchiato">Macchiato</option>
-            <option value="catppuccinFrappe">Frappe</option>
-            <option value="catppuccinLatte">Latte</option>
-            <option disabled selected>Custom Themes</option>
-          </select>
-        </div>
-        <div class="settings-card">
-          <h3>Custom Themes</h3>
-          <p id="currentThemeText">Selected Theme: (loading)</p>
-          <button class="key-button" id="ct" onclick="newCustomTheme();">Create</button>
-          <p id="currentThemeText">Import theme:</p>
-          <input id="et" type="file" accept=".css" />
-          <button class="key-button" id="dt" onclick="deleteCustomTheme();">Delete Current Theme</button>
-          <button class="key-button" id="ext" onclick="exportCustomTheme();">Export Current Theme</button>
-        </div>
-      </div>
     </div>
     <script src="/assets/scripts/m.js?v=82"></script>
     <script src="/assets/scripts/s.js?v=50"></script>

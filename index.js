@@ -16,7 +16,7 @@ const app = express()
 const bareServer = createBareServer("/ov/")
 const PORT = process.env.PORT || 8080
 const cache = new Map()
-const CACHE_TTL = 30 * 24 * 60 * 60 * 1000 // Cache for 30 Days
+const CACHE_TTL = 30 * 24 * 60 * 60 * 1000
 
 if (process.env.config === "true" && config.challenge) {
   console.log(`Password protection is enabled. Usernames are: ${Object.keys(config.users)}`)
@@ -25,11 +25,15 @@ if (process.env.config === "true" && config.challenge) {
 }
 
 app.get("/e/*", async (req, res, next) => {
+  console.log(`[/e/*] Incoming request: ${req.path}`)
+
   if (cache.has(req.path)) {
     const { data, contentType, timestamp } = cache.get(req.path)
     if (Date.now() - timestamp > CACHE_TTL) {
+      console.log(`[/e/*] Cache expired for: ${req.path}`)
       cache.delete(req.path)
     } else {
+      console.log(`[/e/*] Cache hit for: ${req.path}`)
       res.writeHead(200, { "Content-Type": contentType })
       return res.end(data)
     }
@@ -46,29 +50,36 @@ app.get("/e/*", async (req, res, next) => {
     for (const [prefix, baseUrl] of Object.entries(baseUrls)) {
       if (req.path.startsWith(prefix)) {
         reqTarget = baseUrl + req.path.slice(prefix.length)
+        console.log(`[/e/*] Matched prefix: ${prefix} → Fetching: ${reqTarget}`)
         break
       }
     }
 
     if (!reqTarget) {
+      console.warn(`[/e/*] No prefix matched for path: ${req.path}`)
       return next()
     }
 
     const asset = await fetch(reqTarget)
+    console.log(`[/e/*] GitHub response: ${asset.status} for ${reqTarget}`)
+
     if (asset.status !== 200) {
+      console.warn(`[/e/*] Non-200 response (${asset.status}) for: ${reqTarget}`)
       return next()
     }
 
     const data = Buffer.from(await asset.arrayBuffer())
     const ext = path.extname(reqTarget)
     const no = [".unityweb"]
-    const contentType = no.includes(ext) ? "application/octet-stream" : mime.getType(ext)
+    const contentType = no.includes(ext) ? "application/octet-stream" : mime.getType(ext) || "application/octet-stream"
 
     cache.set(req.path, { data, contentType, timestamp: Date.now() })
+    console.log(`[/e/*] Cached and serving: ${req.path} as ${contentType}`)
+
     res.writeHead(200, { "Content-Type": contentType })
     res.end(data)
   } catch (error) {
-    console.error(error)
+    console.error(`[/e/*] Fetch error for ${req.path}:`, error)
     res.setHeader("Content-Type", "text/html")
     res.status(500).send("Error fetching the asset")
   }
@@ -93,6 +104,7 @@ const routes = [
   { path: "/ts", file: "tools.html" },
   { path: "/", file: "index.html" },
   { path: "/tos", file: "tos.html" },
+  { path: "assets/css/assets/media/background/full-main.png", file: "assets/media/background/full-main.png" },
 ]
 
 routes.forEach((route) => {
@@ -102,7 +114,8 @@ routes.forEach((route) => {
 })
 
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, "static", "404.html"))
+  console.log("missed route:", req.path) // see what's actually 404ing
+  next()
 })
 
 app.use((err, req, res, next) => {
